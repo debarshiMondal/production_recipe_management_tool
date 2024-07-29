@@ -254,36 +254,6 @@ def generate_bill():
             os.makedirs(os.path.join(outlet_dir, 'Bills'))
         pdf.output(pdf_output_path)
 
-        # Generate the Excel file for sales data
-        sales_data = []
-        for dish in dishes:
-            sales_data.append({
-                'Date': date,
-                'Dish Name': dish['name'],
-                'Offline Price': dish['price'],
-                'Add On': '',
-                'Add On Cost': '',
-                'Add On Price': ''
-            })
-
-        if add_ons:
-            for add_on in add_ons:
-                sales_data.append({
-                    'Date': date,
-                    'Dish Name': '',
-                    'Offline Price': '',
-                    'Add On': add_on['name'],
-                    'Add On Cost': add_on['qty'],
-                    'Add On Price': add_on['price']
-                })
-
-        sales_df = pd.DataFrame(sales_data)
-        sales_folder = 'data/Sales'
-        if not os.path.exists(sales_folder):
-            os.makedirs(sales_folder)
-        excel_filename = f"{date}_{bill_number}_T{total_price}_D{discount_amount}_T{tax}_FS{final_subtotal}.xlsx"
-        sales_df.to_excel(os.path.join(sales_folder, excel_filename), index=False)
-
         return jsonify({'success': True, 'billLink': url_for('sales_management.download_bill', outlet=outlet, date=date, customer_name=customer_name)})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
@@ -322,10 +292,11 @@ def generate_kot():
 
             # Add add-ons
             if add_ons:
+                pdf.cell(0, 5, txt="Add Ons:", ln=True, align="L")
                 for add_on in add_ons:
-                    pdf.cell(0, 5, txt=f"Add Ons: {add_on['name']}: {add_on['qty']} {add_on['unit']}", ln=True, align="L")
-                #for add_on in add_ons:
-                    #pdf.cell(0, 5, txt=f"{add_on['name']}: {add_on['qty']} {add_on['unit']}", ln=True, align="L")
+                    pdf.cell(60, 5, txt=f"{add_on['name']}", ln=True, align="L")
+                    pdf.cell(30, 5, txt=f"{add_on['qty']}", ln=True, align="L")
+                    pdf.cell(30, 5, txt=f"{add_on['unit']}", ln=True, align="L")
 
             pdf.ln(5)
 
