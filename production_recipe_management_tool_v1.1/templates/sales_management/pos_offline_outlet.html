@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS Offline Outlet</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/order_management.css') }}">
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+            <a href="/sales-management/pos/offline" class="previous-page-btn">Previous Page</a>
+        </div>
+        <h1 class="page-title">POS Offline - {{ outlet }}</h1>
+        <a href="/" class="btn home-btn">Home</a>
+    </header>
+    <main class="main-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>Create Dish</h2>
+                    <form id="uploadForm" method="POST" enctype="multipart/form-data" action="{{ url_for('sales_management.upload_dish', outlet=outlet) }}">
+                        <input type="hidden" name="outlet" value="{{ outlet }}">
+                        <div class="form-group">
+                            <label for="file">Upload File (Please upload the relevant Excel files)</label>
+                            <input type="file" class="form-control-file" id="file" name="file">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <h2>Company Information</h2>
+                    <form id="companyInfoForm">
+                        <input type="hidden" name="outlet" value="{{ outlet }}">
+                        <div class="form-group">
+                            <label for="companyName">Company Name</label>
+                            <input type="text" class="form-control" id="companyName" value="{{ outlet_info['Name'] }}" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="companyPhone">Company Phone</label>
+                            <input type="text" class="form-control" id="companyPhone" value="{{ outlet_info['Phone'] }}" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="companyEmail">Company Email</label>
+                            <input type="text" class="form-control" id="companyEmail" value="{{ outlet_info['Email'] }}" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="companyAddress">Company Address</label>
+                            <textarea class="form-control" id="companyAddress" rows="3" disabled>{{ outlet_info['Address'] }}</textarea>
+                        </div>
+                    </form>
+
+                    <h2>Create Bill</h2>
+                    <form id="billingForm">
+                        <input type="hidden" name="outlet" value="{{ outlet }}">
+                        <div class="form-group">
+                            <label for="customerName">Customer Name</label>
+                            <input type="text" class="form-control" id="customerName" placeholder="Enter customer name">
+                        </div>
+                        <div class="form-group">
+                            <label for="customerPhone">Customer Phone</label>
+                            <input type="text" class="form-control" id="customerPhone" placeholder="Enter customer phone">
+                        </div>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Select</th>
+                                    <th>Dish Name</th>
+                                    <th>Offline Price</th>
+                                    <th>Add On</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dishesTableBody">
+                                {% for dish in dishes %}
+                                <tr>
+                                    <td><input type="checkbox" class="dish-select"></td>
+                                    <td class="dish-name">{{ dish.name }}</td>
+                                    <td class="dish-price">₹{{ dish.offlinePrice }}</td>
+                                    <td>
+                                        <select class="form-control add-on-select">
+                                            <option value="">Select Add On</option>
+                                            {% for add_on in add_ons %}
+                                            <option value="{{ add_on }}">{{ add_on }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="add-on-details d-none">
+                                            <input type="number" class="form-control add-on-qty" placeholder="Qty">
+                                            <select class="form-control add-on-unit">
+                                                <option value="gm">gm</option>
+                                                <option value="pieces">pieces</option>
+                                            </select>
+                                            <input type="number" class="form-control add-on-gross-margin" placeholder="Gross Margin (%)">
+                                            <input type="number" class="form-control add-on-price" placeholder="Unit Price">
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                        <div class="d-flex justify-content-between">
+                            <div class="form-group">
+                                <label for="discount">Apply Discount</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="discount" placeholder="Discount Amount">
+                                    <select class="form-control" id="discountType">
+                                        <option value="flat">Flat</option>
+                                        <option value="percent">Percent</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="tax">Apply Tax (%)</label>
+                                <input type="number" class="form-control" id="tax" placeholder="Tax Percentage">
+                            </div>
+                            <div class="form-group">
+                                <label for="subtotal">Subtotal</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">₹</span>
+                                    <input type="text" class="form-control" id="subtotal" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="finalSubtotal">Final Subtotal</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₹</span>
+                                <input type="text" class="form-control" id="finalSubtotal" readonly>
+                            </div>
+                        </div>
+                        <button type="button" id="generateBill" class="btn btn-success">Generate Bill</button>
+                        <button type="button" id="generateKOT" class="btn btn-warning">Generate KOT</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="footer mt-5 py-3 bg-light">
+        <div class="container">
+            <a id="billLink" class="btn btn-link" style="display:none;">Download Bill</a>
+            <a id="kotLink" class="btn btn-link" style="display:none;">Download KOT</a>
+            <span class="text-muted">© 2024 Your Company Name. All rights reserved.</span>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="{{ url_for('static', filename='js/sales_management_pos_offline.js') }}"></script>
+</body>
+</html>

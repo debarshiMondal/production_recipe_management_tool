@@ -1,0 +1,125 @@
+/* Main content styles */
+.main-content {
+    display: flex;
+    justify-content: center;  /* Center the container horizontally */
+    align-items: flex-start;
+    height: calc(100vh - 60px); /* Adjust height according to your header height */
+    padding: 0;
+    margin-top: 5px; /* Reduce the margin from the header */
+}
+
+.container {
+    display: flex;
+    gap: 20px; /* Reduce the space between the sections */
+    width: 100%; /* Make sure the container takes full width */
+}
+
+/* Styles for the left-hand side section */
+.left-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 70%; /* Adjust width as needed */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.left-section h2 {
+    font-size: 32px; /* Increase font size */
+    margin-bottom: 20px;
+}
+
+.left-section input[type="text"] {
+    width: 65%; /* Increase input box width */
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.left-section .btn {
+    background-color: #ff0000; /* Red color for the left section button */
+    color: #ffffff;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    display: inline-block;
+    text-align: center;
+    margin-top: 10px; /* Ensure some space between the input and button */
+}
+
+.left-section .btn:hover {
+    background-color: #cc0000; /* Darker red on hover */
+}
+
+/* Styles for the categories section */
+.categories-container {
+    width: 20%; /* Adjust width as needed */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.categories-container h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.categories-container .btn {
+    margin-bottom: 10px;
+}
+
+.categories-container .category-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.categories-container .category-item .delete-btn {
+    margin-left: 20px;
+}
+
+/* Styles for the red delete button */
+.delete-btn {
+    background-color: #ff0000; /* Red color */
+    color: #ffffff;
+    padding: 5px 10px; /* Adjust padding for size */
+    border: none;
+    border-radius: 15px; /* Makes the button roundish */
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    background-color: #cc0000; /* Darker red on hover */
+}
+
+/* Adjust button and input styles as needed */
+.categories-container .create-category-section {
+    margin-top: 20px;
+    width: 100%;
+}
+
+/* Styles for the green button */
+.green-btn {
+    background-color: #28a745; /* Green color */
+    color: #ffffff;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    display: inline-block;
+    text-align: center;
+}
+
+.green-btn:hover {
+    background-color: #218838; /* Darker green on hover */
+}

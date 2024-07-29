@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Own Production KOT</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/own_production_kot.css') }}">
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+            <a href="javascript:history.back()" class="previous-page-btn">Previous Page</a>
+        </div>
+        <a href="/" class="btn home-btn">Home</a>
+        <div class="page-title">Own Production KOT</div>
+    </header>
+    <main class="main-content">
+        <input type="text" id="search-box" placeholder="Search products...">
+        <input type="number" id="threshold-input-gm" placeholder="Set threshold (gm)">
+        <input type="number" id="threshold-input-pieces" placeholder="Set threshold (pieces)">
+        <button onclick="setThreshold()">Set Threshold</button>
+        <form id="kot-form" action="{{ url_for('order_management.save_kot') }}" method="post">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Unit</th>
+                        <th>Unit Cost</th>
+                        <th>Current Stock (gm)</th>
+                        <th>Current Stock (Pieces)</th>
+                        <th>Order Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td>{{ product.Product }}</td>
+                        <td>{{ product.Unit }}</td>
+                        <td>{{ product['Unit Cost'] }}</td>
+                        <td>{{ product['Current Stock (gm)'] }}</td>
+                        <td>{{ product['Current Stock (Pieces)'] }}</td>
+                        <td><input type="number" name="order_value_{{ product.Product }}" min="0"></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button type="submit" class="btn">Save</button>
+        </form>
+    </main>
+    <script src="{{ url_for('static', filename='js/own_production_kot.js') }}"></script>
+</body>
+</html>

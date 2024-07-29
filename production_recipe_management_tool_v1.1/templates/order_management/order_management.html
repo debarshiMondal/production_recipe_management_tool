@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/order_management.css') }}">
+</head>
+<body>
+    <header>
+        <div>
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+            <a href="javascript:history.back()" class="previous-page-btn">Previous Page</a>
+        </div>
+        <a href="/" class="btn home-btn">Home</a>
+    </header>
+    <main>
+        <h1>Order Management</h1>
+        <div class="button-container">
+            <a href="{{ url_for('order_management.own_production_kot') }}" class="btn">Own Production KOT</a>
+            <a href="{{ url_for('order_management.outsourced_product_order_ticket') }}" class="btn">Outsourced Product Shopping List</a>
+            <a href="{{ url_for('order_management.packaging_materials_shopping_list') }}" class="btn">Packaging Materials Shopping List</a>
+            <a href="{{ url_for('order_management.confirmed_purchase') }}" class="btn">Confirmed Purchase</a>           
+        </div>
+    </main>
+</body>
+</html>

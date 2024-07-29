@@ -1,0 +1,21 @@
+sales_management.py adjustments.
+
+
+The KOT generated as a PDF can be printed by thermal KOT printers, but you might need to adjust the dimensions to match the specifications of the thermal printer.
+
+Steps to Adjust Dimensions for Thermal Printers:
+Determine Printer Specifications:
+
+Check the width of the thermal printer paper. Common widths are 58mm and 80mm.
+Set PDF Page Size:
+
+Adjust the page size in the PDF generation code to match the width of the thermal printer paper. For example:
+For 58mm width: pdf = FPDF(orientation='P', unit='mm', format=(58, 297))
+For 80mm width: pdf = FPDF(orientation='P', unit='mm', format=(80, 297))
+Adjust Content Layout:
+
+Ensure the content fits within the width by adjusting font sizes and cell widths accordingly.
+Test Printing:
+
+Generate a sample KOT and test print it on the thermal printer. Adjust the dimensions and layout based on the test print results.
+By setting the correct page size and ensuring the content fits within the specified width, the KOT will be compatible with thermal printers and print correctly.

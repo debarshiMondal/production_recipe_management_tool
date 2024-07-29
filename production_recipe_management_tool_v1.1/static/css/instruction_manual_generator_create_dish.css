@@ -1,0 +1,136 @@
+body {
+    padding-top: 20px;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.btn-group .btn {
+    margin-right: 10px;
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+.dropdown-menu {
+    width: auto;
+}
+.dropdown-item {
+    cursor: pointer;
+}
+a.btn-link {
+    color: #dc3545;
+    font-weight: bold;
+    text-decoration: underline;
+}
+a.btn-link:hover {
+    color: #bd2130;
+    text-decoration: none;
+}
+.selected-product {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.selected-product span,
+.selected-product input,
+.selected-product select,
+.selected-product button {
+    margin-right: 10px;
+}
+.selected-products-box {
+    border: 1px solid #ddd;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+}
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    font-weight: bold;
+}
+.energy-type {
+    border: 1px solid purple;
+    padding: 10px;
+    margin-top: 20px;
+    border-radius: 15px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9ff;
+    font-family: Arial, sans-serif;
+    color: #333;
+    width: 20%;
+}
+.footer {
+    background-color: #f8f9fa;
+    padding: 20px 0;
+    text-align: center;
+    border-top: 1px solid #e7e7e7;
+}
+.footer .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.footer .text-muted {
+    color: #6c757d;
+}
+.raw-material-button {
+    background-color: #dc3545;
+    color: white;
+}
+
+.raw-material-button:hover {
+    background-color: #bd2130;
+}
+
+.energy-fields {
+    margin-top: 10px;
+}
+.raw-material-note {
+    border: 1px solid #007bff;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    background-color: #e9f7fe;
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+.total-cost-box {
+    border: 1px solid green;
+    padding: 20px;
+    background-color: #e6ffe6;
+    border-radius: 5px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    width: 20%;
+    text-align: center;
+}
+.input-width {
+    width: 180px; /* Adjust the width as needed */
+}
+.selling-price-box {
+    border: 2px solid red;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #f8d7da;
+    width: 250px; 
+}
+
+.selling-price-label {
+    font-weight: bold;
+}
+
+.selling-price-amount {
+    font-weight: normal;
+}

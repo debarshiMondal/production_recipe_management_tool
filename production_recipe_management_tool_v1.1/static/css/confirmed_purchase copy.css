@@ -1,0 +1,87 @@
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #fff;
+    border-bottom: 1px solid #ccc;
+    position: relative;
+}
+
+.logo {
+    max-height: 50px;
+}
+
+.previous-page-btn {
+    background-color: transparent;
+    color: #ff0000;
+    text-decoration: underline;
+    margin-left: 10px;
+}
+
+.home-btn {
+    background-color: #ff0000;
+    color: #ffffff;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+main {
+    padding: 20px;
+}
+
+.instruction-box {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+
+button {
+    background-color: #ff0000;
+    color: #ffffff;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #cc0000;
+}
+
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.comparison-table th,
+.comparison-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.comparison-table th {
+    background-color: #f2f2f2;
+}
+
+#missing-products {
+    margin-top: 20px;
+}
+
+#missing-products ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.submit-button {
+    width: fit-content;
+}

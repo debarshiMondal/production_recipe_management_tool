@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production Recipe Management Tool</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+</head>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+        <h1>Production Management Tool</h1>
+    </header>
+    <main>
+        <div class="button-container">
+            <a href="/recipe-management" class="btn">Recipe Management</a>
+            <a href="/inventory-management" class="btn">Inventory Management</a>
+            <a href="/order-management" class="btn">Order Management</a>
+            <a href="/sales-management" class="btn">Cost, Sales & Report Management</a>
+            <a href="/store-management" class="btn">Store Management</a>
+            <a href="/instruction-manual-generator" class="btn">Instruction Manual Generator</a>
+        </div>
+    </main>
+</body>
+</html>

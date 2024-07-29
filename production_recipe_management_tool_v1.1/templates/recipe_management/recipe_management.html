@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/recipe_management.css') }}">
+</head>
+<body>
+    <header>
+        <div>
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+            <a href="/recipe-management" class="previous-page-btn">Previous Page</a>
+        </div>
+        <a href="/" class="btn home-btn">Home</a>
+    </header>
+    <main>
+        <h1>Recipe Management</h1>
+        <div class="button-container">
+            <a href="/recipe-management/add-update-delete" class="btn">Add/Update/Delete Recipes</a>
+            <a href="/recipe-management/scale-ingredients" class="btn">Scale Ingredients, Generate Shopping Lists</a>
+        </div>
+    </main>
+</body>
+</html>

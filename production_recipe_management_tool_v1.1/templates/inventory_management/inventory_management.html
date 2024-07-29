@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/inventory_management.css') }}">
+</head>
+<body>
+    <header>
+        <div>
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+            <a href="javascript:history.back()" class="previous-page-btn">Previous Page</a>
+        </div>
+        <a href="/" class="btn home-btn">Home</a>
+    </header>
+    <main>
+        <h1>Inventory Management</h1>
+        <div class="button-container">
+            <a href="{{ url_for('inventory_management_bp.raw_materials_dashboard') }}" class="btn">Raw Materials</a>
+            <a href="{{ url_for('inventory_management_bp.packaging_materials_dashboard') }}" class="btn">Packaging Materials</a>
+            <a href="{{ url_for('inventory_management_bp.own_production_dashboard') }}" class="btn">Own Production</a>
+            <a href="{{ url_for('inventory_management_bp.outsourced_products_dashboard') }}" class="btn">Outsourced Products</a>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!-- pos_offline.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS Offline</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/order_management.css') }}">
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+            <a href="/sales-management/pos" class="previous-page-btn">Previous Page</a>
+        </div>
+        <h1 class="page-title">POS Offline</h1>
+        <a href="/" class="btn home-btn">Home</a>
+    </header>
+    <main class="main-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>Create New Outlet</h2>
+                    <form method="POST" action="{{ url_for('sales_management.create_outlet') }}">
+                        <div class="form-group">
+                            <label for="outletName">Outlet Name</label>
+                            <input type="text" class="form-control" id="outletName" name="outletName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="outletPhone">Outlet Phone</label>
+                            <input type="text" class="form-control" id="outletPhone" name="outletPhone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="outletEmail">Outlet Email</label>
+                            <input type="email" class="form-control" id="outletEmail" name="outletEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="outletAddress">Outlet Address</label>
+                            <textarea class="form-control" id="outletAddress" name="outletAddress" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create Outlet</button>
+                    </form>
+                </div>
+                <div class="col-md-6">
+                    <h2>Existing Outlets</h2>
+                    <div class="list-group mt-4">
+                        {% for outlet in outlets %}
+                        <a href="/sales-management/pos/offline/{{ outlet }}" class="list-group-item list-group-item-action">{{ outlet }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="footer mt-5 py-3 bg-light">
+        <div class="container">
+            <span class="text-muted">© 2024 Your Company Name. All rights reserved.</span>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

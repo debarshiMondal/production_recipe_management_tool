@@ -1,0 +1,108 @@
+/* static/css/inventory_management_raw_materials.css */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #fff;
+    border-bottom: 1px solid #ccc;
+    position: relative;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    max-height: 120px;
+    margin-right: 20px;
+}
+
+.home-btn {
+    background-color: #ff0000;
+    color: #ffffff;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.previous-page-btn {
+    background-color: transparent;
+    color: #ff0000;
+    text-decoration: underline;
+    margin-left: 1px;
+    font-size: 12px;
+}
+
+.page-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 50px 0;
+}
+
+.top-buttons, .bottom-buttons, .threshold-section {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.top-buttons input, .threshold-section input {
+    margin-right: 10px;
+}
+
+.btn {
+    background-color: #ff0000;
+    color: #ffffff;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    display: inline-block;
+    margin: 10px;
+}
+
+.table {
+    width: 90%;
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+}
+
+.table th {
+    background-color: #ff0000;
+    color: #ffffff;
+}
+
+.table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.table tr.red {
+    background-color: #ffcccc;
+}
+
+.threshold-exceeded {
+    color: red;
+    font-weight: bold;
+}

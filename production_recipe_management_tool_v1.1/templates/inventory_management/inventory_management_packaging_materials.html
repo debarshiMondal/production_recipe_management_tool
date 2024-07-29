@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Packaging Materials</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/inventory_management_packaging_materials.css') }}">
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+            <a href="javascript:history.back()" class="previous-page-btn">Previous Page</a>
+        </div>
+        <a href="/" class="btn home-btn">Home</a>
+        <div class="page-title">Packaging Materials</div>
+    </header>
+    <main class="main-content">
+        <div class="top-buttons">
+            <input type="text" id="searchBox" placeholder="Search Product...">
+            <button class="btn" id="searchButton">Search</button>
+            <button class="btn" id="clearAllButton">Clear All</button>
+            <button class="btn" id="saveButtonTop">Save</button>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Sl No</th>
+                    <th>Product</th>
+                    <th>Unit</th>
+                    <th>Unit Cost</th>
+                    <th>Current Stock (gm)</th>
+                    <th>Current Stock (Pieces)</th>
+                    <th>Update</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="productTableBody">
+                <!-- Data will be populated here by JS -->
+            </tbody>
+        </table>
+        <div class="bottom-buttons">
+            <button class="btn" id="saveButtonBottom">Save</button>
+        </div>
+        <div class="threshold-section">
+            <label for="thresholdGm">Threshold (gm):</label>
+            <input type="number" id="thresholdGm" placeholder="Enter threshold for gm...">
+            <label for="thresholdPieces">Threshold (pieces):</label>
+            <input type="number" id="thresholdPieces" placeholder="Enter threshold for pieces...">
+            <button class="btn" id="setThresholdsButton">Set</button>
+        </div>
+        <div class="add-product-section">
+            <h2>Add Product</h2>
+            <form id="addProductForm">
+                <label for="newProductName">Product Name:</label>
+                <input type="text" id="newProductName" required>
+                <label for="newProductUnit">Unit:</label>
+                <input type="text" id="newProductUnit" required>
+                <label for="newProductUnitCost">Unit Cost:</label>
+                <input type="number" id="newProductUnitCost" required>
+                <button class="btn" id="addProductButton">Add Product</button>
+            </form>
+        </div>
+    </main>
+    <script src="{{ url_for('static', filename='js/inventory_management_packaging_materials.js') }}"></script>
+</body>
+</html>

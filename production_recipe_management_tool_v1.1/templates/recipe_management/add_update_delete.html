@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add/Delete Recipes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/recipe_management.css') }}">
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+            <a href="/recipe-management" class="previous-page-btn">Previous Page</a>
+        </div>
+        <h1 class="page-title">Add/Delete Recipes</h1>
+        <a href="/" class="btn home-btn">Home</a>
+    </header>
+    <main>
+        <div class="content-section">
+            <div class="form-section">
+                <h2>Add Recipes</h2>
+                <form action="{{ url_for('recipe_management_bp.upload_file') }}" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="recipeName">Recipe Name:</label>
+                        <input type="text" id="recipeName" name="recipeName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="unit">Unit:</label>
+                        <select id="unit" name="unit" required>
+                            <option value="gm">Gm</option>
+                            <option value="pieces">Pieces</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="yield">Recipe's Yield:</label>
+                        <input type="text" id="recipeYield" name="yield" placeholder="Enter yield value">
+                    </div>
+                    <div class="form-group">
+                        <label for="fileUpload">Upload Recipe:</label>
+                        <input type="file" id="fileUpload" name="fileUpload" required>
+                    </div>
+                    <button type="submit" class="btn">Upload</button>
+                </form>
+            </div>
+            <div class="vertical-line"></div>
+            <div class="recipes-section">
+                <h2>Recipes</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Recipe Name</th>
+                            <th>Amount Produced</th>
+                            <th>Unit Cost</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for recipe in recipes %}
+                        <tr>
+                            <td>{{ recipe.name }}</td>
+                            <td>{{ recipe.yield }}</td>
+                            <td>{{ recipe.unit_cost }}</td>
+                            <td>
+                                <a href="{{ url_for('recipe_management_bp.delete_file', filename=recipe.filename) }}" class="btn delete-btn">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instruction Manual Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/instruction_manual_generator.css') }}">
+</head>
+<body>
+    <header>
+        <div>
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+            <a href="/instruction-manual-generator" class="previous-page-btn">Previous Page</a>
+        </div>
+        <a href="/" class="btn home-btn">Home</a>
+    </header>
+    <main>
+        <h1>Instruction Manual Generator</h1>
+        <div class="button-container">
+            <a href="/instruction-manual-generator/cooking-methods" class="btn">Cooking Methods</a>
+            <a href="/instruction-manual-generator/price-setting" class="btn">Price Setting and Cooking Instructions</a>
+        </div>
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scale Ingredients, Generate Shopping Lists</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/recipe_management.css') }}">
+    <script src="{{ url_for('static', filename='js/recipe_management.js') }}" defer></script>
+    <style>
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 14px;
+            text-align: center;
+            text-decoration: none;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px; /* Adjust the margin to control the spacing between buttons */
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+            <a href="/recipe-management" class="previous-page-btn">Previous Page</a>
+        </div>
+        <h1 class="page-title">Scale Ingredients, Generate Shopping Lists</h1>
+        <a href="/" class="btn home-btn">Home</a>
+    </header>
+    <main>
+        <div class="content-section">
+            <div class="form-section">
+                <h2>Select Recipe:</h2>
+                <div class="form-group">
+                    <div class="form-group">
+                        <div id="selectRecipeBox" class="dropdown-box">Recipes</div>
+                        <select id="selectRecipe" name="selectRecipe" style="display:none;">
+                            {% for recipe in recipes %}
+                            <option value="{{ recipe.filename }}">{{ recipe.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <div id="selectUnitBox" class="dropdown-box">Select Unit</div>
+                        <select id="unit" name="unit" style="display:none;">
+                            <option value="gm">Gm</option>
+                            <option value="pieces">Pieces</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <div id="quantityBox" class="input-box">Quantity to be produced</div>
+                        <input type="number" id="quantity" name="quantity" style="display:none;" placeholder="Quantity to be produced">
+                    </div>
+                    <button id="addToPalette" class="btn">Add to Palette</button>
+                </div>
+            </div>
+            <div class="vertical-line"></div>
+            <div class="recipes-section">
+                <h2>Palette</h2>
+                <div id="palette" class="palette-box">
+                    <div class="palette-row palette-header">
+                        <div class="palette-item">Item</div>
+                        <div class="palette-quantity">Quantity</div>
+                        <div class="palette-subtotal">Subtotal</div>
+                        <div class="palette-action">Action</div>
+                    </div>
+                    <!-- Palette items will be dynamically added here -->
+                </div>
+                <div id="totalCost" class="total-cost">
+                    <h3>Total Cost: <span id="costValue">0</span></h3>
+                </div>
+            </div>
+        </div>
+    </main>
+    <hr class="footer-line">
+    <footer>
+        <button id="generateShoppingList" class="button">Generate the Shopping List</button>
+        <div id="downloadLinks" class="download-links">
+            <a id="shoppingListLink" href="#" class="button" style="display:none;">Download Shopping List</a>
+            <a id="estimationLink" href="#" class="button" style="display:none;">Estimation of Production</a>
+        </div>
+    </footer>
+</body>
+</html>
