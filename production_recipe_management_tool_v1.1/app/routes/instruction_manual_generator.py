@@ -235,15 +235,3 @@ def download_ingredients(dish_name):
     response.headers["Content-Disposition"] = f"attachment; filename={dish_name}_ingredients.txt"
     response.headers["Content-Type"] = "text/plain"
     return response
-
-@instruction_manual_generator_bp.route('/download-details/<dish_name>', methods=['GET'])
-def download_details(dish_name):
-    # Generate the content of the details PDF
-    # Here you should include the actual calculations and details for the dish
-    # For demonstration purposes, I'm using placeholder content
-    content = f"Details for {dish_name}\nStep 1: Do something\nStep 2: Do something else"
-    # Create a PDF in-memory
-    pdf = io.BytesIO()
-    pdf.write(content.encode('utf-8'))
-    pdf.seek(0)
-    return send_file(pdf, attachment_filename=f"{dish_name}_details.pdf", as_attachment=True)
