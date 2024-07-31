@@ -7,31 +7,25 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show the download button after calculating the price
         downloadIngredientsButton.style.display = 'inline-block';
 
-        // Remove any previous click event listeners
-        const newDownloadButton = downloadIngredientsButton.cloneNode(true);
-        downloadIngredientsButton.parentNode.replaceChild(newDownloadButton, downloadIngredientsButton);
+        // Generate and set download link for ingredients text file
+        const ingredientsText = generateIngredientsText();
+        const ingredientsBlob = new Blob([ingredientsText], { type: 'text/plain' });
+        const ingredientsTextUrl = URL.createObjectURL(ingredientsBlob);
 
-        // Add event listener to the new download button
-        newDownloadButton.addEventListener('click', function() {
-            // Generate and set download link for ingredients text file
-            const ingredientsText = generateIngredientsText();
-            const ingredientsBlob = new Blob([ingredientsText], { type: 'text/plain' });
-            const ingredientsTextUrl = URL.createObjectURL(ingredientsBlob);
+        // Generate and set download link for ingredients Excel file
+        const excelUrl = generateExcelFile();
 
-            // Generate and set download link for ingredients Excel file
-            const excelUrl = generateExcelFile();
+        // Set the download attribute to the button for text file
+        downloadIngredientsButton.addEventListener('click', function() {
+            const link = document.createElement('a');
+            link.href = ingredientsTextUrl;
+            link.download = `${dishName}.txt`;
+            link.click();
 
-            // Download text file
-            const textLink = document.createElement('a');
-            textLink.href = ingredientsTextUrl;
-            textLink.download = `${dishName}.txt`;
-            textLink.click();
-
-            // Download Excel file
-            const excelLink = document.createElement('a');
-            excelLink.href = excelUrl;
-            excelLink.download = `${dishName}-OffSP-${document.getElementById('offlineSellingPrice').textContent.split('₹')[1]}OnSP-${document.getElementById('onlineSellingPrice').textContent.split('₹')[1]}.xlsx`;
-            excelLink.click();
+            // Set the download attribute to the button for Excel file
+            link.href = excelUrl;
+            link.download = `${dishName}-OffSP-${document.getElementById('offlineSellingPrice').textContent.split('₹')[1]}OnSP-${document.getElementById('onlineSellingPrice').textContent.split('₹')[1]}.xlsx`;
+            link.click();
         });
     });
 
