@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const packagingMaterialBeforePM = document.getElementById('packagingMaterialBeforePM');
     const packagingMaterialAfterPM = document.getElementById('packagingMaterialAfterPM');
+    const packagingMaterialAfterOSP = document.getElementById('packagingMaterialAfterOSP');
     const profitMarginInput = document.getElementById('profitMargin');
     const onlineMarginInput = document.getElementById('onlineMargin');
     const adDiscountCoverageInput = document.getElementById('adDiscountCoverage');
@@ -358,9 +359,11 @@ document.addEventListener('DOMContentLoaded', function() {
             //Here Profir Margin is Gross Margin.
             offlineSellingPrice = (totalFoodProductionCost / (1 - profitMargin / 100) + packagingMaterialCost);
             onlineSellingPrice = offlineSellingPrice / (1 - onlineMargin / 100)  + adDiscountCoverage;
+        } else if (packagingMaterialAfterOSP.checked) {
+            //Here Profir Margin is Gross Margin.
+            offlineSellingPrice = ((totalFoodProductionCost / (1 - profitMargin / 100)) + packagingMaterialCost);
+            onlineSellingPrice = ((offlineSellingPrice-packagingMaterialCost) / (1 - onlineMargin / 100) + adDiscountCoverage + packagingMaterialCost);
         }
-        
-        
 
         offlineSellingPriceDisplay.textContent = `₹${offlineSellingPrice.toFixed(2)}`;
         onlineSellingPriceDisplay.textContent = `₹${onlineSellingPrice.toFixed(2)}`;

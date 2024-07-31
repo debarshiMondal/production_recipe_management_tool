@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const calculateSellingPriceButton = document.getElementById('calculateSellingPrice');
     const downloadIngredientsButton = document.getElementById('downloadIngredients');
-    const dishNameInput = document.getElementById('dishNameInput'); // Make dish name editable
+    const dishName = document.querySelector('h1').textContent.split(': ')[1]; // Extract the dish name dynamically
 
     calculateSellingPriceButton.addEventListener('click', function() {
         // Show the download button after calculating the price
@@ -20,8 +20,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Generate and set download link for ingredients Excel file
             const excelUrl = generateExcelFile();
-
-            const dishName = dishNameInput.value; // Get the updated dish name
 
             // Download text file
             const textLink = document.createElement('a');

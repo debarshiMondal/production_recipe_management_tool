@@ -35,7 +35,7 @@
                 <a href="/" class="btn btn-danger">Home</a>
             </div>
         </div>
-        <h1 class="text-center mt-4">Create Dish: <input type="text" id="dishNameInput" value="{{ dish_name }}"></h1>
+        <h1 class="text-center mt-4">Create Dish: {{ dish_name }}</h1>
         <div class="container mt-5">
             <div class="row">
                 <div class="col-md-12">
@@ -148,12 +148,6 @@
                         <input class="form-check-input" type="radio" name="packagingMaterialOption" id="packagingMaterialAfterPM" value="afterPM">
                         <label class="form-check-label" for="packagingMaterialAfterPM">
                             Consider packaging material cost after PM
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="packagingMaterialOption" id="packagingMaterialAfterOSP" value="afterOSP">
-                        <label class="form-check-label" for="packagingMaterialAfterOSP">
-                            Consider packaging material cost after OSP
                         </label>
                     </div>
 
