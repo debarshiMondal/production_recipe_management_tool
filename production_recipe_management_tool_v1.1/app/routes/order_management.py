@@ -112,6 +112,7 @@ def submit_form(material_type):
     else:
         return jsonify({'success': False, 'missing_products': missing_products})
 
+
 @order_management_bp.route('/update_<material_type>_inventory', methods=['POST'])
 def update_inventory_form(material_type):
     file = request.files['file']
@@ -146,9 +147,9 @@ def update_inventory_form(material_type):
 
         data_index = data_rows.index[0]
         if data_df.at[data_index, 'Unit'] == 'gm':
-            data_df.at[data_index, 'Current Stock (gm)'] = quantity_gm
+            data_df.at[data_index, 'Current Stock (gm)'] += quantity_gm
         else:
-            data_df.at[data_index, 'Current Stock (Pieces)'] = quantity_pieces
+            data_df.at[data_index, 'Current Stock (Pieces)'] += quantity_pieces
 
         updated_results.append(data_df.loc[data_index])
 
@@ -165,66 +166,14 @@ def update_inventory_form(material_type):
 
         results_df.to_excel(filepath, index=False)
 
+        # Save the updated data back to the original file
+        data_df.to_excel(data_file_map[material_type], index=False)
+
         download_url = url_for('order_management.download_file', filename=filename)
         return jsonify({'success': True, 'table_html': table_html, 'download_url': download_url, 'missing_products': missing_products})
     else:
         return jsonify({'success': False, 'missing_products': missing_products})
 
-@order_management_bp.route('/update_inventory', methods=['POST'])
-def update_inventory():
-    # Load and update each data file
-    data_files = {
-        'raw_material': 'data/Raw_Material_List.xlsx',
-        'packaging_material': 'data/Packaging_Material_List.xlsx',
-        'outsourced_products': 'data/Outsourced_Product_Lits.xlsx',
-        'own_production': 'data/Own_Production_Products_List.xlsx'
-    }
-
-    success = True
-    for key, file_path in data_files.items():
-        try:
-            updated_df = pd.read_excel(f'downloads/{key.capitalize()}_Updated_Inventory_{datetime.now().strftime("%Y%m%d%H%M%S")}.xlsx')
-            updated_df.to_excel(file_path, index=False)
-        except Exception as e:
-            success = False
-            print(f"Failed to update {key}: {e}")
-
-    return jsonify({'success': success})
-
-@order_management_bp.route('/save_kot', methods=['POST'])
-def save_kot():
-    order_values = request.json
-    updated_products = []
-
-    # Load data from Excel file
-    df = pd.read_excel('data/Own_Production_Products_List.xlsx')
-
-    for index, row in df.iterrows():
-        product_name = row['Product']
-        order_key = f'order_value_{product_name}'
-        if order_key in order_values and order_values[order_key]:
-            updated_products.append({
-                'Product': row['Product'],
-                'Unit': row['Unit'],
-                'Unit Cost': row['Unit Cost'],
-                'Current Stock (gm)': row['Current Stock (gm)'],
-                'Current Stock (Pieces)': row['Current Stock (Pieces)'],
-                'Order_Value': order_values[order_key]
-            })
-
-    if updated_products:
-        new_df = pd.DataFrame(updated_products)
-        filename = f"Own_Production_KOT_{datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
-        filepath = os.path.join('downloads', filename)
-
-        # Ensure the downloads directory exists
-        os.makedirs(os.path.dirname(filepath), exist_ok=True)
-
-        new_df.to_excel(filepath, index=False)
-
-        return jsonify({'success': True, 'download_url': url_for('order_management.download_file', filename=filename)})
-    else:
-        return jsonify({'success': False})
 
 @order_management_bp.route('/save_order_ticket', methods=['POST'])
 def save_order_ticket():

@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const calculateSellingPriceButton = document.getElementById('calculateSellingPrice');
     const offlineSellingPriceDisplay = document.getElementById('offlineSellingPrice');
     const onlineSellingPriceDisplay = document.getElementById('onlineSellingPrice');
+    const packagingMaterialCostDisplay = document.getElementById('packagingMaterialCost');
 
     // Fetch raw materials and populate the dropdown
     fetch('/instruction-manual-generator/get-raw-materials')
@@ -244,6 +245,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 qtyInput.type = 'number';
                 qtyInput.placeholder = 'Qty';
                 qtyInput.classList.add('form-control', 'd-inline-block', 'w-auto', 'mx-2');
+                qtyInput.addEventListener('input', updatePackagingMaterialCost); // Add event listener to update packaging material cost
 
                 const unitSelect = document.createElement('select');
                 unitSelect.classList.add('form-control', 'd-inline-block', 'w-auto', 'mx-2');
@@ -265,6 +267,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 removeButton.textContent = 'Remove';
                 removeButton.addEventListener('click', function() {
                     packagingMaterialContainer.remove();
+                    updatePackagingMaterialCost(); // Update packaging material cost when packaging material is removed
                 });
 
                 packagingMaterialContainer.appendChild(packagingMaterialLabel);
@@ -274,6 +277,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 packagingMaterialContainer.appendChild(removeButton);
 
                 selectedPackagingMaterialsContainer.appendChild(packagingMaterialContainer);
+
+                updatePackagingMaterialCost(); // Update packaging material cost when a new packaging material is added
             })
             .catch(error => {
                 console.error('Error fetching unit cost:', error);
@@ -335,15 +340,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function calculateSellingPrice() {
         const totalFoodProductionCost = parseFloat(document.getElementById('total-cost').textContent.split('₹')[1]) || 0;
-        let packagingMaterialCost = 0;
-
-        // Calculate the cost of selected packaging materials. Here Profir Margin is Gross Margin.
-        const selectedPackagingMaterials = document.querySelectorAll('#selected-packaging-materials .selected-product');
-        selectedPackagingMaterials.forEach(packagingMaterial => {
-            const qty = parseFloat(packagingMaterial.querySelector('input').value) || 0;
-            const unitCost = parseFloat(packagingMaterial.querySelector('.unit-cost').textContent.split('₹')[1]) || 0;
-            packagingMaterialCost += qty * unitCost;
-        });
+        const packagingMaterialCost = parseFloat(packagingMaterialCostDisplay.textContent.split('₹')[1]) || 0;
 
         const profitMargin = parseFloat(profitMarginInput.value) || 0;
         const onlineMargin = parseFloat(onlineMarginInput.value) || 0;
@@ -362,11 +359,25 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (packagingMaterialAfterOSP.checked) {
             //Here Profir Margin is Gross Margin.
             offlineSellingPrice = ((totalFoodProductionCost / (1 - profitMargin / 100)) + packagingMaterialCost);
-            onlineSellingPrice = ((offlineSellingPrice-packagingMaterialCost) / (1 - onlineMargin / 100) + adDiscountCoverage + packagingMaterialCost);
+            onlineSellingPrice = ((offlineSellingPrice-packagingMaterialCost) / (1 - onlineMargin / 100) + adDiscountCoverage);
         }
 
         offlineSellingPriceDisplay.textContent = `₹${offlineSellingPrice.toFixed(2)}`;
         onlineSellingPriceDisplay.textContent = `₹${onlineSellingPrice.toFixed(2)}`;
+    }
+
+    function updatePackagingMaterialCost() {
+        let packagingMaterialCost = 0;
+
+        // Calculate the cost of selected packaging materials
+        const selectedPackagingMaterials = document.querySelectorAll('#selected-packaging-materials .selected-product');
+        selectedPackagingMaterials.forEach(packagingMaterial => {
+            const qty = parseFloat(packagingMaterial.querySelector('input').value) || 0;
+            const unitCost = parseFloat(packagingMaterial.querySelector('.unit-cost').textContent.split('₹')[1]) || 0;
+            packagingMaterialCost += qty * unitCost;
+        });
+
+        packagingMaterialCostDisplay.textContent = `₹${packagingMaterialCost.toFixed(2)}`;
     }
 });
 
