@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmed Purchase</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/confirmed_purchase.css') }}">
+</head>
+<body>
+    <header>
+        <div>
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+            <a href="javascript:history.back()" class="previous-page-btn">Previous Page</a>
+        </div>
+        <a href="/" class="btn home-btn">Home</a>
+    </header>
+    <main>
+        <h1>Verify your shopping list against your inventory</h1>
+        <div class="instruction-box">
+            <p><a href="#" id="submit-link" onclick="toggleDropdown()">Submit the shopping list to be sent to the Procurement Team</a></p>
+        </div>
+        <div id="dropdown-container" class="dropdown-container" style="display:none;">
+            <button onclick="showForm('raw_material')">Raw Material</button>
+            <button onclick="showForm('packaging_material')">Packaging Material</button>
+            <button onclick="showForm('outsourced_products')">Outsourced Products</button>
+            <button onclick="showForm('own_production')">Own Production</button>
+        </div>
+        <div id="form-container" class="form-container" style="display:none;">
+            <div class="instruction-box">
+                <p id="form-instructions"></p>
+                <p>Please use the attached format for submission. <a href="{{ url_for('order_management.download_sample_form') }}">Download Sample Form</a></p>
+            </div>
+            <form id="shopping-list-form" method="post" enctype="multipart/form-data" onsubmit="submitForm(event)">
+                <input type="file" name="file" required>
+                <button type="submit" class="submit-button">Submit</button>
+            </form>
+        </div>
+        <div id="missing-products" style="display:none;">
+            <h2>Missing Products</h2>
+            <ul id="missing-products-list"></ul>
+        </div>
+        <div id="results" style="display:none;">
+            <h2>Results</h2>
+            <div id="results-table"></div>
+            <a id="download-link" href="#" class="btn">Download Results</a>
+        </div>
+        <hr>
+        <h1>Wish to bulk update the inventory?</h1>
+        <div class="instruction-box">
+            <p><a href="#" id="update-inventory-link" onclick="toggleUpdateDropdown()">Submit the shopping list to be sent to the Procurement Team</a></p>
+        </div>
+        <div id="update-dropdown-container" class="dropdown-container" style="display:none;">
+            <button onclick="showUpdateForm('raw_material')">Raw Material</button>
+            <button onclick="showUpdateForm('packaging_material')">Packaging Material</button>
+            <button onclick="showUpdateForm('outsourced_products')">Outsourced Products</button>
+            <button onclick="showUpdateForm('own_production')">Own Production</button>
+        </div>
+        <div id="update-form-container" class="form-container" style="display:none;">
+            <div class="instruction-box">
+                <p id="update-form-instructions"></p>
+                <p>Please use the attached format for submission. <a href="{{ url_for('order_management.download_sample_form') }}">Download Sample Form</a></p>
+            </div>
+            <form id="update-inventory-form" method="post" enctype="multipart/form-data" onsubmit="submitUpdateForm(event)">
+                <input type="file" name="file" required>
+                <button type="submit" class="submit-button">Submit</button>
+            </form>
+        </div>
+        <div id="update-results" style="display:none;">
+            <h2>Updated Inventory</h2>
+            <div id="update-results-table"></div>
+            <button class="btn" onclick="updateInventory()">Update the Inventory</button>
+        </div>
+    </main>
+    <script src="{{ url_for('static', filename='js/confirmed_purchase.js') }}"></script>
+</body>
+</html>

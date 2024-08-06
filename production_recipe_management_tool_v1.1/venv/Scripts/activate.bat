@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\Deborshi\Desktop\production_recipe_management_tool_v1.1\venv
+set VIRTUAL_ENV=C:\Users\Deborshi\OneDrive\Documents\GitHub\production_recipe_management_tool\production_recipe_management_tool_v1.1\venv
 
 if not defined PROMPT set PROMPT=$P$G
 

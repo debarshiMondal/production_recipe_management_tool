@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from flask import Blueprint, request, jsonify, render_template, url_for
+from flask import Blueprint, request, jsonify, render_template, redirect, url_for, send_from_directory
 from datetime import datetime
 from fpdf import FPDF
 
@@ -14,29 +14,22 @@ def sales_management():
 def pos():
     return render_template('sales_management/pos.html')
 
-@sales_management_bp.route('/sales-management/pos/b2b', methods=['GET'])
-def pos_b2b():
-    return render_template('sales_management/pos_b2b.html')
+@sales_management_bp.route('/sales-management/pos/offline', methods=['GET'])
+def offline():
+    outlets_dir = 'data/Outlets'
+    outlets = []
+    if os.path.exists(outlets_dir):
+        outlets = os.listdir(outlets_dir)
+    return render_template('sales_management/pos_offline.html', outlets=outlets)
 
-@sales_management_bp.route('/sales-management/pos/catering', methods=['GET'])
-def pos_catering():
-    return render_template('sales_management/pos_catering.html')
+@sales_management_bp.route('/sales-management/pos/online', methods=['GET'])
+def online():
+    return render_template('sales_management/pos_online.html')
 
-@sales_management_bp.route('/sales-management/procurement-costs', methods=['GET'])
-def procurement_costs():
-    return render_template('sales_management/procurement_costs.html')
-
-@sales_management_bp.route('/sales-management/sales-reports', methods=['GET'])
-def sales_reports():
-    return render_template('sales_management/sales_reports.html')
-
-@sales_management_bp.route('/sales-management/ledger', methods=['GET'])
-def ledger():
-    return render_template('sales_management/ledger.html')
-
-@sales_management_bp.route('/sales-management/pos/offline')
-def pos_offline():
-    dish_folder = 'data/Dish'
+@sales_management_bp.route('/sales-management/pos/offline/<outlet>', methods=['GET'])
+def pos_offline(outlet):
+    outlet_dir = os.path.join('data/Outlets', outlet)
+    dish_folder = os.path.join(outlet_dir, 'Dish')
     dishes = []
     if os.path.exists(dish_folder):
         for filename in os.listdir(dish_folder):
@@ -49,10 +42,59 @@ def pos_offline():
                     'offlinePrice': offline_price,
                     'onlinePrice': online_price
                 })
-    return render_template('sales_management/pos_offline.html', dishes=dishes)
 
-@sales_management_bp.route('/upload-dish', methods=['POST'])
-def upload_dish():
+    # Read outlet information
+    outlet_info_path = os.path.join(outlet_dir, 'OutletInfo.txt')
+    outlet_info = {}
+    if os.path.exists(outlet_info_path):
+        with open(outlet_info_path, 'r') as f:
+            for line in f:
+                key, value = line.split(': ')
+                outlet_info[key.strip()] = value.strip()
+
+    return render_template('sales_management/pos_offline_outlet.html', dishes=dishes, outlet=outlet, outlet_info=outlet_info)
+
+@sales_management_bp.route('/sales-management/pos/create-outlet', methods=['GET', 'POST'])
+def create_outlet():
+    if request.method == 'POST':
+        outlet_name = request.form.get('outletName')
+        outlet_phone = request.form.get('outletPhone')
+        outlet_email = request.form.get('outletEmail')
+        outlet_address = request.form.get('outletAddress')
+        
+        # Create outlet directory structure
+        outlet_dir = os.path.join('data/Outlets', outlet_name)
+        os.makedirs(outlet_dir, exist_ok=True)
+        os.makedirs(os.path.join(outlet_dir, 'Dish'), exist_ok=True)
+        os.makedirs(os.path.join(outlet_dir, 'Bills'), exist_ok=True)
+        os.makedirs(os.path.join(outlet_dir, 'Sales'), exist_ok=True)
+        os.makedirs(os.path.join(outlet_dir, 'KOTs'), exist_ok=True)
+        
+        # Create Bill Number and Order ID files
+        with open(os.path.join(outlet_dir, 'Bill Number.txt'), 'w') as f:
+            f.write('1')
+        with open(os.path.join(outlet_dir, 'Order ID.txt'), 'w') as f:
+            f.write('1')
+        
+        # Save outlet information
+        outlet_info = f"Name: {outlet_name}\nPhone: {outlet_phone}\nEmail: {outlet_email}\nAddress: {outlet_address}"
+        with open(os.path.join(outlet_dir, 'OutletInfo.txt'), 'w') as f:
+            f.write(outlet_info)
+        
+        return redirect(url_for('sales_management.offline'))
+
+    return render_template('sales_management/create_outlet.html')
+
+@sales_management_bp.route('/delete-outlet/<outlet>', methods=['POST'])
+def delete_outlet(outlet):
+    outlet_dir = os.path.join('data/Outlets', outlet)
+    if os.path.exists(outlet_dir):
+        import shutil
+        shutil.rmtree(outlet_dir)
+    return redirect(url_for('sales_management.offline'))
+
+@sales_management_bp.route('/upload-dish/<outlet>', methods=['POST'])
+def upload_dish(outlet):
     if 'file' not in request.files:
         return jsonify({'success': False, 'message': 'No file part'})
 
@@ -60,14 +102,21 @@ def upload_dish():
     if file.filename == '':
         return jsonify({'success': False, 'message': 'No selected file'})
 
+    outlet_dir = os.path.join('data/Outlets', outlet)
+    dish_folder = os.path.join(outlet_dir, 'Dish')
+    
     if file:
         filename = file.filename
-        file.save(os.path.join('data/Dish', filename))
+        file_path = os.path.join(dish_folder, filename)
+        if os.path.exists(file_path):
+            return jsonify({'success': False, 'message': 'File already exists'})
+        file.save(file_path)
         return jsonify({'success': True})
 
-@sales_management_bp.route('/get-dishes', methods=['GET'])
-def get_dishes():
-    dish_folder = 'data/Dish'
+@sales_management_bp.route('/get-dishes/<outlet>', methods=['GET'])
+def get_dishes(outlet):
+    outlet_dir = os.path.join('data/Outlets', outlet)
+    dish_folder = os.path.join(outlet_dir, 'Dish')
     dishes = []
     if os.path.exists(dish_folder):
         for filename in os.listdir(dish_folder):
@@ -84,7 +133,7 @@ def get_dishes():
 
 @sales_management_bp.route('/get-add-ons', methods=['GET'])
 def get_add_ons():
-    raw_material_list = 'data/Raw_Material_List.xlsx'
+    raw_material_list = 'data/Add_on_list.xlsx'
     add_ons = []
     if os.path.exists(raw_material_list):
         df = pd.read_excel(raw_material_list)
@@ -95,11 +144,13 @@ def get_add_ons():
 def generate_bill():
     try:
         data = request.get_json()
+        outlet = data.get('outlet')
         customer_name = data.get('customerName')
         customer_phone = data.get('customerPhone')
         date = datetime.now().strftime("%Y-%m-%d")
-        bill_number = get_next_number('data/Bill Number.txt')
-        order_number = get_next_number('data/Order ID.txt')
+        outlet_dir = os.path.join('data/Outlets', outlet)
+        bill_number = get_next_number(os.path.join(outlet_dir, 'Bill Number.txt'))
+        order_number = get_next_number(os.path.join(outlet_dir, 'Order ID.txt'))
         dishes = data.get('dishes', [])
         add_ons = data.get('add_ons', [])
         discount = data.get('discount', 0)
@@ -107,11 +158,13 @@ def generate_bill():
         tax = data.get('tax', 0)
         final_subtotal = data.get('finalSubtotal', 0)
 
-        # Get company information from request
-        company_name = data.get('companyName')
-        company_phone = data.get('companyPhone')
-        company_email = data.get('companyEmail')
-        company_address = data.get('companyAddress')
+        # Get company information from outlet info file
+        with open(os.path.join(outlet_dir, 'OutletInfo.txt'), 'r') as f:
+            outlet_info = f.read().strip().split('\n')
+            company_name = outlet_info[0].split(': ')[1]
+            company_phone = outlet_info[1].split(': ')[1]
+            company_email = outlet_info[2].split(': ')[1]
+            company_address = outlet_info[3].split(': ')[1]
 
         # Create PDF
         pdf = FPDF()
@@ -196,9 +249,9 @@ def generate_bill():
         pdf.cell(120, 10, txt="Final Subtotal", border=1)
         pdf.cell(30, 10, txt=f"{final_subtotal:.2f}", border=1, align="R")
 
-        pdf_output_path = os.path.join('static/bills', f"Bill_{date}_{customer_name}.pdf")
-        if not os.path.exists('static/bills'):
-            os.makedirs('static/bills')
+        pdf_output_path = os.path.join(outlet_dir, 'Bills', f"Bill_{date}_{customer_name}.pdf")
+        if not os.path.exists(os.path.join(outlet_dir, 'Bills')):
+            os.makedirs(os.path.join(outlet_dir, 'Bills'))
         pdf.output(pdf_output_path)
 
         # Generate the Excel file for sales data
@@ -231,7 +284,7 @@ def generate_bill():
         excel_filename = f"{date}_{bill_number}_T{total_price}_D{discount_amount}_T{tax}_FS{final_subtotal}.xlsx"
         sales_df.to_excel(os.path.join(sales_folder, excel_filename), index=False)
 
-        return jsonify({'success': True, 'billLink': url_for('static', filename=f'bills/Bill_{date}_{customer_name}.pdf')})
+        return jsonify({'success': True, 'billLink': url_for('sales_management.download_bill', outlet=outlet, date=date, customer_name=customer_name)})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 
@@ -239,9 +292,11 @@ def generate_bill():
 def generate_kot():
     try:
         data = request.get_json()
+        outlet = data.get('outlet')
         date = datetime.now().strftime("%Y-%m-%d")
-        bill_number = get_next_number('data/Bill Number.txt')
-        order_number = get_next_number('data/Order ID.txt')
+        outlet_dir = os.path.join('data/Outlets', outlet)
+        bill_number = get_next_number(os.path.join(outlet_dir, 'Bill Number.txt'))
+        order_number = get_next_number(os.path.join(outlet_dir, 'Order ID.txt'))
         dishes = data.get('dishes', [])
         add_ons = data.get('add_ons', [])
 
@@ -255,7 +310,8 @@ def generate_kot():
             if i > 0:
                 pdf.add_page()
 
-            # Add order and bill information
+            # Add outlet name
+            pdf.cell(0, 5, txt=f"Outlet: {outlet}", ln=True, align="L")
             pdf.cell(0, 5, txt=f"Order ID: {order_number}", ln=True, align="L")
             pdf.cell(0, 5, txt=f"Date: {date}", ln=True, align="L")
             pdf.cell(0, 5, txt=f"Bill Number: {bill_number}", ln=True, align="L")
@@ -266,20 +322,33 @@ def generate_kot():
 
             # Add add-ons
             if add_ons:
-                pdf.cell(0, 5, txt="Add Ons:", ln=True, align="L")
                 for add_on in add_ons:
-                    pdf.cell(0, 5, txt=f"{add_on['name']}: {add_on['qty']} {add_on['unit']}", ln=True, align="L")
+                    pdf.cell(0, 5, txt=f"Add Ons: {add_on['name']}: {add_on['qty']} {add_on['unit']}", ln=True, align="L")
+                #for add_on in add_ons:
+                    #pdf.cell(0, 5, txt=f"{add_on['name']}: {add_on['qty']} {add_on['unit']}", ln=True, align="L")
 
             pdf.ln(5)
 
-        pdf_output_path = os.path.join('static/kots', f"KOT_{date}_{bill_number}.pdf")
-        if not os.path.exists('static/kots'):
-            os.makedirs('static/kots')
+        pdf_output_path = os.path.join(outlet_dir, 'KOTs', f"KOT_{date}_{bill_number}.pdf")
+        if not os.path.exists(os.path.join(outlet_dir, 'KOTs')):
+            os.makedirs(os.path.join(outlet_dir, 'KOTs'))
         pdf.output(pdf_output_path, 'F')
 
-        return jsonify({'success': True, 'kotLink': url_for('static', filename=f'kots/KOT_{date}_{bill_number}.pdf')})
+        return jsonify({'success': True, 'kotLink': url_for('sales_management.download_kot', outlet=outlet, date=date, bill_number=bill_number)})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
+
+@sales_management_bp.route('/download-bill/<outlet>/<date>/<customer_name>', methods=['GET'])
+def download_bill(outlet, date, customer_name):
+    directory = os.path.join('data/Outlets', outlet, 'Bills')
+    filename = f"Bill_{date}_{customer_name}.pdf"
+    return send_from_directory(directory, filename)
+
+@sales_management_bp.route('/download-kot/<outlet>/<date>/<bill_number>', methods=['GET'])
+def download_kot(outlet, date, bill_number):
+    directory = os.path.join('data/Outlets', outlet, 'KOTs')
+    filename = f"KOT_{date}_{bill_number}.pdf"
+    return send_from_directory(directory, filename)
 
 def get_next_number(file_path):
     if not os.path.exists(file_path):
