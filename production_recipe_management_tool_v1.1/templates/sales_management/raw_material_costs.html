@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raw Material Costs</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/order_management.css') }}">
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+            <a href="{{ url_for('sales_management.procurement_costs') }}" class="previous-page-btn">Previous Page</a>
+        </div>
+        <h1 class="page-title">Raw Material Costs</h1>
+        <a href="/" class="btn home-btn">Home</a>
+    </header>
+    <main class="main-content container">
+        <div class="alert alert-info" role="alert">
+            Please submit the Raw Material Costs form in either .xlsx or .csv format:<br>
+            <a href="{{ url_for('order_management.download_sample_form') }}">Download Sample Form</a>
+        </div>
+        <form id="raw-material-costs-form">
+            <div class="form-group">
+                <label for="file">Choose File</label>
+                <input type="file" class="form-control-file" id="file" name="file" required>
+            </div>
+            <div class="form-group">
+                <label for="date">Date</label>
+                <input type="date" class="form-control" id="date" name="date" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        <div id="results" style="display:none;">
+            <h2>Results</h2>
+            <div id="results-table"></div>
+            <p><strong>Subtotal:</strong> <span id="subtotal"></span></p>
+            <button id="update-cost-table" class="btn btn-secondary">Update the Cost Table</button>
+        </div>
+    </main>
+    <footer class="footer mt-5 py-3 bg-light">
+        <div class="container">
+            <a href="{{ url_for('sales_management.see_raw_material_data') }}" class="btn btn-info">See Data</a>
+            <span class="text-muted">© 2024 Your Company Name. All rights reserved.</span>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/raw_material_costs.js') }}"></script>
+</body>
+</html>

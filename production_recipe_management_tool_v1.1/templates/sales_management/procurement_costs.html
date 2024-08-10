@@ -11,7 +11,7 @@
     <header>
         <div class="header-left">
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
-            <a href="/sales-management" class="previous-page-btn">Previous Page</a>
+            <a href="javascript:history.back()" class="previous-page-btn">Previous Page</a>
         </div>
         <h1 class="page-title">Procurement Costs</h1>
         <a href="/" class="btn home-btn">Home</a>
@@ -20,8 +20,19 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <h2>Procurement Costs Section</h2>
-                    <!-- Add your content for procurement costs here -->
+                    <h2>Procurement Costs</h2>
+                    <div class="list-group mt-4">
+                        <a href="/sales-management/procurement-costs/raw-material-costs" class="list-group-item list-group-item-action">Raw Material Costs</a>
+                        <a href="/sales-management/procurement-costs/packaging-material-costs" class="list-group-item list-group-item-action">Packaging Material Costs</a>
+                        <a href="/sales-management/procurement-costs/outsourced-product-costs" class="list-group-item list-group-item-action">Outsourced Product Costs</a>
+                        <a href="/sales-management/procurement-costs/electricity-costs" class="list-group-item list-group-item-action">Electricity Costs</a>
+                        <a href="/sales-management/procurement-costs/rental-costs" class="list-group-item list-group-item-action">Rental Costs</a>
+                        <a href="/sales-management/procurement-costs/salary-costs" class="list-group-item list-group-item-action">Salary Costs</a>
+                        <a href="/sales-management/procurement-costs/experiment-costs" class="list-group-item list-group-item-action">Experiment Costs</a>
+                        <a href="/sales-management/procurement-costs/logistic-costs" class="list-group-item list-group-item-action">Logistic Costs</a>
+                        <a href="/sales-management/procurement-costs/staff-food-costs" class="list-group-item list-group-item-action">Staff Food Costs</a>
+                        <a href="/sales-management/procurement-costs/miscellaneous" class="list-group-item list-group-item-action">Miscellaneous</a>
+                    </div>
                 </div>
             </div>
         </div>

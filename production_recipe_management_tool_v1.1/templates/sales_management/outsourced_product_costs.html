@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outsourced Product Costs</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sales_management.css') }}">
+</head>
+<body>
+    <header>
+        <div>
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+            <a href="javascript:history.back()" class="previous-page-btn">Previous Page</a>
+        </div>
+        <a href="/" class="btn home-btn">Home</a>
+    </header>
+    <main>
+        <h1>Outsourced Product Costs</h1>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Cost</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Table rows will be dynamically generated here -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+    <footer class="footer">
+        &copy; 2024 Your Company. All rights reserved.
+    </footer>
+</body>
+</html>

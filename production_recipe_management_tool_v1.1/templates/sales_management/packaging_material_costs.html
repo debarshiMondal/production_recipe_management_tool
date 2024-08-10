@@ -3,39 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales Reports</title>
+    <title>Packaging Material Costs</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/order_management.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sales_management.css') }}">
 </head>
 <body>
     <header>
         <div class="header-left">
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
-            <a href="/" class="previous-page-btn">Previous Page</a>
+            <a href="javascript:history.back()" class="previous-page-btn">Previous Page</a>
         </div>
-        <h1 class="page-title">Sales Reports</h1>
+        <h1 class="page-title">Packaging Material Costs</h1>
         <a href="/" class="btn home-btn">Home</a>
     </header>
     <main class="main-content">
         <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <h2>Sales Reports</h2>
-                    <div class="table-container">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Report</th>
-                                    <th>Date</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Populate table rows dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <h2>Packaging Material Costs</h2>
+            <div class="table-container">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Material</th>
+                            <th>Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Populate table rows dynamically -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </main>
