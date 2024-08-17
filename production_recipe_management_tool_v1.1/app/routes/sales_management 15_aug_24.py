@@ -1,8 +1,7 @@
 import os
 import pandas as pd
-from flask import Blueprint, request, jsonify, render_template, redirect, url_for, send_from_directory
-from datetime import datetime
-from fpdf import FPDF
+from flask import Blueprint, request, jsonify, render_template, redirect, url_for, send_from_directory, send_file
+from datetime import datetime, timedelta
 
 sales_management_bp = Blueprint('sales_management', __name__)
 
@@ -155,7 +154,7 @@ def generate_bill():
         add_ons = data.get('add_ons', [])
         discount = data.get('discount', 0)
         discount_type = data.get('discountType')
-        tax = data.get('tax', 0)
+        tax_percentage = data.get('tax', 0)
         final_subtotal = data.get('finalSubtotal', 0)
 
         # Get company information from outlet info file
@@ -232,19 +231,21 @@ def generate_bill():
         else:
             discount_amount = discount
 
+        subtotal = total_price
         total_price -= discount_amount
-        total_price += (tax / 100) * total_price
+        total_tax_amount = (tax_percentage / 100) * total_price
+        total_price += total_tax_amount
 
         # Add totals to the bill
         pdf.set_font("Arial", size=10, style='B')
         pdf.cell(120, 10, txt="Subtotal", border=1)
-        pdf.cell(30, 10, txt=f"{total_price + discount_amount:.2f}", border=1, align="R")
+        pdf.cell(30, 10, txt=f"{subtotal:.2f}", border=1, align="R")
         pdf.ln(10)
         pdf.cell(120, 10, txt="Discount", border=1)
         pdf.cell(30, 10, txt=f"{discount_amount:.2f}", border=1, align="R")
         pdf.ln(10)
-        pdf.cell(120, 10, txt="Tax (%)", border=1)
-        pdf.cell(30, 10, txt=f"{tax:.2f}", border=1, align="R")
+        pdf.cell(120, 10, txt="Tax", border=1)
+        pdf.cell(30, 10, txt=f"{total_tax_amount:.2f}", border=1, align="R")
         pdf.ln(10)
         pdf.cell(120, 10, txt="Final Subtotal", border=1)
         pdf.cell(30, 10, txt=f"{final_subtotal:.2f}", border=1, align="R")
@@ -259,34 +260,29 @@ def generate_bill():
         for dish in dishes:
             sales_data.append({
                 'Date': date,
-                'Dish Name': dish['name'],
-                'Offline Price': dish['price'],
-                'Add On': '',
-                'Add On Cost': '',
-                'Add On Price': ''
+                'Item': dish['name'],
+                'Price': dish['price']
             })
 
         if add_ons:
             for add_on in add_ons:
                 sales_data.append({
                     'Date': date,
-                    'Dish Name': '',
-                    'Offline Price': '',
-                    'Add On': add_on['name'],
-                    'Add On Cost': add_on['qty'],
-                    'Add On Price': add_on['price']
+                    'Item': add_on['name'],
+                    'Price': add_on['qty'] * add_on['price']
                 })
 
         sales_df = pd.DataFrame(sales_data)
         sales_folder = 'data/Sales'
         if not os.path.exists(sales_folder):
             os.makedirs(sales_folder)
-        excel_filename = f"{date}_{bill_number}_T{total_price}_D{discount_amount}_T{tax}_FS{final_subtotal}.xlsx"
+        excel_filename = f"{date}_ON-{outlet}_ST-{subtotal:.2f}_D-{discount_amount:.2f}_T-{total_tax_amount:.2f}_FS-{final_subtotal:.2f}.xlsx"
         sales_df.to_excel(os.path.join(sales_folder, excel_filename), index=False)
 
         return jsonify({'success': True, 'billLink': url_for('sales_management.download_bill', outlet=outlet, date=date, customer_name=customer_name)})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
+
 
 @sales_management_bp.route('/generate-kot', methods=['POST'])
 def generate_kot():
@@ -324,8 +320,6 @@ def generate_kot():
             if add_ons:
                 for add_on in add_ons:
                     pdf.cell(0, 5, txt=f"Add Ons: {add_on['name']}: {add_on['qty']} {add_on['unit']}", ln=True, align="L")
-                #for add_on in add_ons:
-                    #pdf.cell(0, 5, txt=f"{add_on['name']}: {add_on['qty']} {add_on['unit']}", ln=True, align="L")
 
             pdf.ln(5)
 
@@ -363,3 +357,184 @@ def get_next_number(file_path):
     with open(file_path, 'w') as f:
         f.write(str(number))
     return number
+
+@sales_management_bp.route('/sales-management/procurement-costs/raw-material-costs')
+def raw_material_costs():
+    return render_template('sales_management/raw_material_costs.html')
+
+@sales_management_bp.route('/sales-management/procurement-costs')
+def procurement_costs():
+    return render_template('sales_management/procurement_costs.html')
+
+@sales_management_bp.route('/sales-management/procurement-costs/raw-material-costs/submit', methods=['POST'])
+def submit_raw_material_costs():
+    file = request.files['file']
+    date = request.form['date']
+    if not file or not date:
+        return jsonify({'success': False, 'message': 'File and date are required'})
+
+    submitted_df = pd.read_excel(file)
+    submitted_df['Quantity (Gm)'] = (pd.to_numeric(submitted_df['Quantity (Gm)'], errors='coerce').fillna(0)).round(2)
+    submitted_df['Quantity (Pieces)'] = (pd.to_numeric(submitted_df['Quantity (Pieces)'], errors='coerce').fillna(0)).round(2)
+    submitted_df['Unit Cost'] = (pd.to_numeric(submitted_df['Unit Cost'], errors='coerce').fillna(0)).round(2)
+
+    submitted_df['Date'] = date
+    submitted_df['Total Cost'] = (submitted_df['Unit Cost'] * (submitted_df['Quantity (Gm)'] + submitted_df['Quantity (Pieces)'])).round(2)
+
+    table_html = submitted_df.to_html(index=False, classes='table table-striped')
+    subtotal = round(submitted_df['Total Cost'].sum(), 2)
+
+    return jsonify({'success': True, 'table_html': table_html, 'subtotal': subtotal, 'data': submitted_df.to_dict(orient='records')})
+
+@sales_management_bp.route('/sales-management/procurement-costs/raw-material-costs/update', methods=['POST'])
+def update_raw_material_costs():
+    data = request.get_json()
+    date = data['date']
+    if not date:
+        return jsonify({'success': False, 'message': 'Date is required'})
+
+    # Extract the month from the date
+    month = datetime.strptime(date, '%Y-%m-%d').strftime('%B-%Y')
+    folder_path = os.path.join('data', 'Procurement Costs', 'Raw material', month)
+    os.makedirs(folder_path, exist_ok=True)
+    file_path = os.path.join(folder_path, f'Raw_Material_Costs_{datetime.strptime(date, "%Y-%m-%d").strftime("%d-%b-%Y")}.xlsx')
+
+    # Save the submitted data as Excel file
+    submitted_df = pd.DataFrame(data['data'])
+    submitted_df.to_excel(file_path, index=False)
+
+    return jsonify({'success': True, 'message': 'Cost table updated successfully'})
+
+@sales_management_bp.route('/order-management/download_sample_form')
+def download_sample_form():
+    return send_file('data/Sample_Form.xlsx', as_attachment=True)
+
+@sales_management_bp.route('/sales-management/procurement-costs/raw-material-costs/see-data', methods=['GET'])
+def see_raw_material_data():
+    return render_template('sales_management/see_raw_material_data.html')
+
+@sales_management_bp.route('/sales-management/procurement-costs/raw-material-costs/get-data', methods=['POST'])
+def get_raw_material_data():
+    time_frame = request.form['time_frame']
+    start_date = request.form.get('start_date', '')
+    end_date = request.form.get('end_date', '')
+    folder_path = os.path.join('data', 'Procurement Costs', 'Raw material')
+    all_files = []
+
+    # Logic to determine the files to read based on the time frame
+    if time_frame == 'Today':
+        target_date = datetime.today().strftime('%d-%b-%Y')
+        all_files = [os.path.join(root, name) for root, dirs, files in os.walk(folder_path) for name in files if target_date in name]
+    elif time_frame == 'Yesterday':
+        target_date = (datetime.today() - timedelta(days=1)).strftime('%d-%b-%Y')
+        all_files = [os.path.join(root, name) for root, dirs, files in os.walk(folder_path) for name in files if target_date in name]
+    elif time_frame == 'This Week':
+        start_date = (datetime.today() - timedelta(days=datetime.today().weekday())).strftime('%Y-%m-%d')
+        end_date = (datetime.today() + timedelta(days=6 - datetime.today().weekday())).strftime('%Y-%m-%d')
+    elif time_frame == 'This Month':
+        start_date = datetime.today().replace(day=1).strftime('%Y-%m-%d')
+        end_date = (datetime.today().replace(day=1) + timedelta(days=32)).replace(day=1).strftime('%Y-%m-%d')
+    elif time_frame == 'Last Month':
+        first = datetime.today().replace(day=1)
+        last_month_end = first - timedelta(days=1)
+        start_date = last_month_end.replace(day=1).strftime('%Y-%m-%d')
+        end_date = last_month_end.strftime('%Y-%m-%d')
+    elif time_frame == 'Last Three Months':
+        start_date = (datetime.today() - timedelta(days=90)).strftime('%Y-%m-%d')
+        end_date = datetime.today().strftime('%Y-%m-%d')
+    elif time_frame == 'Choose Date':
+        if not start_date or not end_date:
+            return jsonify({'success': False, 'message': 'Start date and end date are required for chosen date range'})
+
+    if start_date and end_date:
+        start_date_dt = datetime.strptime(start_date, '%Y-%m-%d')
+        end_date_dt = datetime.strptime(end_date, '%Y-%m-%d')
+        all_files = [os.path.join(root, name) for root, dirs, files in os.walk(folder_path) for name in files if start_date_dt <= datetime.strptime(name.split('_')[3].replace('.xlsx', ''), '%d-%b-%Y') <= end_date_dt]
+
+    if not all_files:
+        return jsonify({'success': False, 'message': 'No data found'})
+
+    all_data = []
+    for file in all_files:
+        df = pd.read_excel(file)
+        all_data.append(df)
+
+    final_df = pd.concat(all_data, ignore_index=True)
+    if time_frame in ['Today', 'Yesterday'] or (time_frame == 'Choose Date' and (start_date == end_date)):
+        table_html = final_df.to_html(index=False, classes='table table-striped')
+        subtotal = round(final_df['Total Cost'].sum(), 2)
+        return jsonify({'success': True, 'table_html': table_html, 'subtotal': subtotal})
+    else:
+        total_cost = round(final_df['Total Cost'].sum(), 2)
+        return jsonify({'success': True, 'total_cost': total_cost})
+
+@sales_management_bp.route('/sales-management/procurement-costs/raw-material-costs/find-product-cost', methods=['POST'])
+def find_product_cost():
+    start_date = request.form['start_date']
+    end_date = request.form['end_date']
+    products = request.form['products']
+    folder_path = os.path.join('data', 'Procurement Costs', 'Raw material')
+
+    if not start_date or not end_date or not products:
+        return jsonify({'success': False, 'message': 'Start date, end date, and products are required'})
+
+    product_list = [p.strip() for p in products.split(',')]
+    start_date_dt = datetime.strptime(start_date, '%Y-%m-%d')
+    end_date_dt = datetime.strptime(end_date, '%Y-%m-%d')
+
+    all_files = [os.path.join(root, name) for root, dirs, files in os.walk(folder_path) for name in files if start_date_dt <= datetime.strptime(name.split('_')[3].replace('.xlsx', ''), '%d-%b-%Y') <= end_date_dt]
+
+    if not all_files:
+        return jsonify({'success': False, 'message': 'No data found'})
+
+    all_data = []
+    for file in all_files:
+        df = pd.read_excel(file)
+        all_data.append(df)
+
+    final_df = pd.concat(all_data, ignore_index=True)
+    product_costs = final_df[final_df['Product'].isin(product_list)].groupby('Product')['Total Cost'].sum().reset_index()
+
+    if product_costs.empty:
+        return jsonify({'success': False, 'message': 'No data found for the specified products'})
+
+    product_costs['Total Cost'] = product_costs['Total Cost'].round(2)
+    return jsonify({'success': True, 'product_costs': product_costs.to_dict(orient='records')})
+
+
+
+@sales_management_bp.route('/sales-management/procurement-costs/packaging-material-costs')
+def packaging_material_costs():
+    return render_template('sales_management/packaging_material_costs.html')
+
+@sales_management_bp.route('/sales-management/procurement-costs/outsourced-product-costs')
+def outsourced_product_costs():
+    return render_template('sales_management/outsourced_product_costs.html')
+
+@sales_management_bp.route('/sales-management/procurement-costs/electricity-costs')
+def electricity_costs():
+    return render_template('sales_management/electricity_costs.html')
+
+@sales_management_bp.route('/sales-management/procurement-costs/rental-costs')
+def rental_costs():
+    return render_template('sales_management/rental_costs.html')
+
+@sales_management_bp.route('/sales-management/procurement-costs/salary-costs')
+def salary_costs():
+    return render_template('sales_management/salary_costs.html')
+
+@sales_management_bp.route('/sales-management/procurement-costs/experiment-costs')
+def experiment_costs():
+    return render_template('sales_management/experiment_costs.html')
+
+@sales_management_bp.route('/sales-management/procurement-costs/logistic-costs')
+def logistic_costs():
+    return render_template('sales_management/logistic_costs.html')
+
+@sales_management_bp.route('/sales-management/procurement-costs/staff-food-costs')
+def staff_food_costs():
+    return render_template('sales_management/staff_food_costs.html')
+
+@sales_management_bp.route('/sales-management/procurement-costs/miscellaneous-costs')
+def miscellaneous_costs():
+    return render_template('sales_management/miscellaneous_costs.html')

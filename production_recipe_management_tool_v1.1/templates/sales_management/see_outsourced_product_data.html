@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>See Outsourced Product Data</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/see_outsourced_product_data.js') }}"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>See Outsourced Product Data</h2>
+        <form id="see-data-form">
+            <div class="form-group">
+                <label for="time_frame">Select Time Frame</label>
+                <select class="form-control" id="time_frame" name="time_frame">
+                    <option value="Today">Today</option>
+                    <option value="Yesterday">Yesterday</option>
+                    <option value="This Week">This Week</option>
+                    <option value="This Month">This Month</option>
+                    <option value="Last Month">Last Month</option>
+                    <option value="Last Three Months">Last Three Months</option>
+                    <option value="Choose Date">Choose Date</option>
+                </select>
+            </div>
+            <div class="form-group" id="date-range" style="display: none;">
+                <label for="start_date">Start Date</label>
+                <input type="date" class="form-control" id="start_date" name="start_date">
+                <label for="end_date">End Date</label>
+                <input type="date" class="form-control" id="end_date" name="end_date">
+            </div>
+            <button type="submit" class="btn btn-primary">See Data</button>
+        </form>
+        <div id="results" style="display: none;">
+            <h3>Results</h3>
+            <div id="results-table"></div>
+            <div id="total-cost" style="font-weight: bold;"></div>
+        </div>
+        <h3>Find Particular Product Cost</h3>
+        <form id="find-product-cost-form">
+            <div class="form-group">
+                <label for="start_date">Start Date</label>
+                <input type="date" class="form-control" id="start_date_find" name="start_date">
+                <label for="end_date">End Date</label>
+                <input type="date" class="form-control" id="end_date_find" name="end_date">
+            </div>
+            <div class="form-group">
+                <label for="products">Enter Products (comma-separated)</label>
+                <textarea class="form-control" id="products" name="products" rows="4"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Find Cost</button>
+        </form>
+        <div id="product-cost-results" style="display: none;">
+            <h3>Product Costs</h3>
+            <div id="product-cost-table"></div>
+        </div>
+    </div>
+</body>
+</html>
