@@ -801,6 +801,70 @@ def logistic_costs():
 def staff_food_costs():
     return render_template('sales_management/staff_food_costs.html')
 
+@sales_management_bp.route('/sales-management/procurement-costs/staff-food-costs/submit', methods=['POST'])
+def submit_staff_food_costs():
+    file = request.files.get('file')
+    date = request.form.get('date')
+
+    if not file or not date:
+        return jsonify({'success': False})
+
+    try:
+        df = pd.read_excel(file) if file.filename.endswith('.xlsx') else pd.read_csv(file)
+        subtotal = df['Cost'].sum()
+        table_html = df.to_html(classes='table table-striped', index=False)
+
+        return jsonify({
+            'success': True,
+            'data': df.to_dict(orient='records'),
+            'table_html': table_html,
+            'subtotal': subtotal
+        })
+    except Exception as e:
+        print(e)
+        return jsonify({'success': False})
+
+@sales_management_bp.route('/sales-management/procurement-costs/staff-food-costs/update', methods=['POST'])
+def update_staff_food_cost_table():
+    data = request.json.get('data')
+    date = request.json.get('date')
+
+    try:
+        print(f"Updating staff food cost table for date: {date} with data: {data}")
+        return jsonify({'success': True})
+    except Exception as e:
+        print(e)
+        return jsonify({'success': False})
+
+@sales_management_bp.route('/sales-management/procurement-costs/staff-food-costs/get-data', methods=['POST'])
+def get_staff_food_cost_data():
+    time_frame = request.form.get('time_frame')
+    start_date = request.form.get('start_date')
+    end_date = request.form.get('end_date')
+
+    data = [
+        {'Item': 'Breakfast', 'Cost': 100},
+        {'Item': 'Lunch', 'Cost': 200},
+        {'Item': 'Dinner', 'Cost': 150}
+    ]
+    df = pd.DataFrame(data)
+    subtotal = df['Cost'].sum()
+    table_html = df.to_html(classes='table table-striped', index=False)
+
+    return jsonify({'success': True, 'table_html': table_html, 'subtotal': subtotal})
+
+@sales_management_bp.route('/sales-management/procurement-costs/staff-food-costs/find-product-cost', methods=['POST'])
+def find_staff_food_cost():
+    products = request.form.get('products')
+    start_date = request.form.get('start_date')
+    end_date = request.form.get('end_date')
+
+    product_list = products.split(',')
+    product_costs = [{'Product': product.strip(), 'Total Cost': 150.0} for product in product_list]
+
+    return jsonify({'success': True, 'product_costs': product_costs})
+
+
 @sales_management_bp.route('/sales-management/procurement-costs/miscellaneous-costs')
 def miscellaneous_costs():
     return render_template('sales_management/miscellaneous_costs.html')

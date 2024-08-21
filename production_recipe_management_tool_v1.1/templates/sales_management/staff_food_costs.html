@@ -4,19 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Staff Food Costs</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/sales_management.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/order_management.css') }}">
 </head>
 <body>
     <header>
-        <div>
+        <div class="header-left">
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
-            <a href="javascript:history.back()" class="previous-page-btn">Previous Page</a>
+            <a href="{{ url_for('sales_management.procurement_costs') }}" class="previous-page-btn">Previous Page</a>
         </div>
+        <h1 class="page-title">Staff Food Costs</h1>
         <a href="/" class="btn home-btn">Home</a>
     </header>
-    <main>
-        <h1>Staff Food Costs</h1>
-        <!-- Add your content for staff food costs here -->
+    <main class="main-content container">
+        <div class="alert alert-info" role="alert">
+            Please submit the Staff Food Costs form in either .xlsx or .csv format:<br>
+            <a href="{{ url_for('order_management.download_sample_form') }}">Download Sample Form</a>
+        </div>
+        <form id="staff-food-costs-form">
+            <div class="form-group">
+                <label for="file">Choose File</label>
+                <input type="file" class="form-control-file" id="file" name="file" required>
+            </div>
+            <div class="form-group">
+                <label for="date">Date</label>
+                <input type="date" class="form-control" id="date" name="date" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        <div id="results" style="display:none;">
+            <h2>Results</h2>
+            <div id="results-table"></div>
+            <p><strong>Subtotal:</strong> <span id="subtotal"></span></p>
+            <button id="update-cost-table" class="btn btn-secondary">Update the Cost Table</button>
+        </div>
     </main>
+    <footer class="footer mt-5 py-3 bg-light">
+        <div class="container">
+            <a href="{{ url_for('sales_management.get_staff_food_cost_data') }}" class="btn btn-info">See Data</a>
+            <span class="text-muted">© 2024 Your Company Name. All rights reserved.</span>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/staff_food_costs.js') }}"></script>
 </body>
 </html>
